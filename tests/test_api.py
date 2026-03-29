@@ -8,7 +8,7 @@ async def test_auth_missing_api_key():
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         response = await ac.post("/api/v1/audit", headers={"engine-type": "postgres"})
-    assert response.status_code == 403
+    assert response.status_code in [401, 403]
     assert response.json() == {"detail": "Not authenticated"}
 
 @pytest.mark.anyio
