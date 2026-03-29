@@ -8,6 +8,7 @@ apscheduler
 pytest
 sqlalchemy
 aiomysql
+cryptography
 openai
 streamlit
 pandas
