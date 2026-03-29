@@ -27,6 +27,8 @@ jobs:
         pip install httpx pytest anyio
 
     - name: Run Pytest
+      env:
+        PYTHONPATH: "." # Asegura que Python reconozca la carpeta 'app' desde la raíz
       run: |
         # Definir variable de entorno falsas para que pydantic-settings no falle en CI si las busca obligatorias
         export API_SECRET_KEY="test_key"
