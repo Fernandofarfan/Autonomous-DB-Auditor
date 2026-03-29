@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  dba-sentinel-api:
+    build: .
+    container_name: dba-sentinel-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    restart: unless-stopped
+    # Si quieres que la red sea local a otras bases de datos también en Docker:
+    # networks:
+    #   - dba-network
+
+# networks:
+#   dba-network:
+#     driver: bridge

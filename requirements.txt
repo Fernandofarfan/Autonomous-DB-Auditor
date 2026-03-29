@@ -1,0 +1,8 @@
+fastapi[all]
+uvicorn
+pydantic-settings
+asyncpg
+httpx
+reportlab
+apscheduler
+pytest
