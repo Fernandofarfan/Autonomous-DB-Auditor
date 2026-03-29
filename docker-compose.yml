@@ -9,10 +9,20 @@ services:
     env_file:
       - .env
     restart: unless-stopped
-    # Si quieres que la red sea local a otras bases de datos también en Docker:
-    # networks:
-    #   - dba-network
+    volumes:
+      # Montado para persistir la DB SQLite generada localmente
+      - ./data:/app/data
 
-# networks:
-#   dba-network:
-#     driver: bridge
+  dba-sentinel-dashboard:
+    build: .
+    container_name: dba-sentinel-dashboard
+    # Sobreescribir el comando para ejecutar streamlit en lugar de FastAPI
+    command: ["streamlit", "run", "dashboard/app.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
+    ports:
+      - "8501:8501"
+    environment:
+      - API_URL=http://dba-sentinel-api:8000
+      - API_KEY=supersecret_dba_key
+    depends_on:
+      - dba-sentinel-api
+    restart: unless-stopped

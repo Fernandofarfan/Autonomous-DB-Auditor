@@ -1,5 +1,6 @@
 from app.db_engines.base import BaseDBEngine
 from app.db_engines.postgres import PostgresEngine
+from app.db_engines.mysql import MySQLEngine
 
 class DBEgineFactory:
     """
@@ -10,7 +11,7 @@ class DBEgineFactory:
     def get_engine(engine_type: str, **opts) -> BaseDBEngine:
         engine_map = {
             "postgres": PostgresEngine,
-            # "mysql": MySQLEngine,
+            "mysql": MySQLEngine
             # "sqlserver": SQLServerEngine
         }
         

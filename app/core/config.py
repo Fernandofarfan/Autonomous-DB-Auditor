@@ -20,7 +20,20 @@ class Settings(BaseSettings):
     PG_PORT: str = "5432"
     PG_DB: str = "postgres"
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    # MySQL Credentials
+    MYSQL_USER: str = "root"
+    MYSQL_PASSWORD: str = ""
+    MYSQL_HOST: str = "localhost"
+    MYSQL_PORT: str = "3306"
+    MYSQL_DB: str = "mysql"
+    
+    # Internal Database
+    DATABASE_URL: str = "sqlite:///./dba_sentinel.db"
+    
+    # AI Options
+    OPENAI_API_KEY: str = ""
+
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 @lru_cache()
 def get_settings() -> Settings:

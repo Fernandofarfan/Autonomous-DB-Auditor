@@ -8,14 +8,21 @@ from app.api.dependencies import get_db_engine, verify_api_key
 from app.services.notifications import send_slack_alert
 from app.services.pdf_generator import generate_pdf_report
 from app.services.cron import start_scheduler, scheduler
+from app.services.llm_advisor import enhance_remediation_with_ai
+from app.core.database import init_db, SessionLocal
+from app.models.audit_history import AuditRecord
 from app.core.config import get_settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Lógica de arranque (Ej. levantar Cron Jobs)
+    # Lógica de arranque
+    init_db() # Crear base local de SQLAlchemy
     start_scheduler()
     yield
-    # Lógica de apagado (Ej. limpiar Scheduler o pools)
+    # Lógica de apagado
     scheduler.shutdown()
 
 app = FastAPI(
@@ -32,10 +39,34 @@ async def run_db_audit(
 ):
     try:
         await engine.connect()
-        # Ejecutamos tanto seguridad como performance
         findings = await engine.run_full_audit()
         
-        # Opcional: Integración inmediata con notificaciones (usando BackgroundTasks de FastAPI)
+        # Opcional: Potenciar resoluciones con LLM
+        for finding in findings:
+            if finding.severity in ("Critical", "High"):
+                ai_solution = await enhance_remediation_with_ai(finding.description, finding.engine)
+                if ai_solution:
+                    finding.remediation_sql = f"-- Sugerencia AI:\n{ai_solution}\n-- Original:\n{finding.remediation_sql}"
+
+        # Guardar en Historial DB (SQLite) modo local
+        try:
+            db_session = SessionLocal()
+            for f in findings:
+                record = AuditRecord(
+                    engine=f.engine,
+                    category=f.category,
+                    severity=f.severity,
+                    description=f.description,
+                    remediation_sql=f.remediation_sql
+                )
+                db_session.add(record)
+            db_session.commit()
+        except Exception as e:
+            logger.error(f"No se pudo guardar historial DB: {e}")
+        finally:
+            db_session.close()
+        
+        # Enviar Slack en background
         background_tasks.add_task(send_slack_alert, findings)
         
         return [f.model_dump() for f in findings]
