@@ -26,3 +26,32 @@ services:
     depends_on:
       - dba-sentinel-api
     restart: unless-stopped
+
+  dba-postgres:
+    image: postgres:15-alpine
+    container_name: dba-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: tu_password
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  dba-mysql:
+    image: mysql:8
+    container_name: dba-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: tu_password
+      MYSQL_DATABASE: mysql
+    ports:
+      - "3307:3306"
+    restart: unless-stopped
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  postgres_data:
+  mysql_data:

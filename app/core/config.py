@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     MYSQL_DB: str = "mysql"
     
     # Internal Database
-    DATABASE_URL: str = "sqlite:///./dba_sentinel.db"
+    DATABASE_URL: str = "sqlite:///./data/dba_sentinel.db"
     
     # AI Options
     OPENAI_API_KEY: str = ""

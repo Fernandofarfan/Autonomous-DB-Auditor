@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+tests/.pytest_cache/
+*.log
+*.sqlite
+*.db
+dba_sentinel.db
+data/
+compose-error.log
