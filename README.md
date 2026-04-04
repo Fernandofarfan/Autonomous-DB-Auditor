@@ -4,12 +4,13 @@
 
 ## 🚀 Características Principales
 
-*   **Arquitectura Multi-Motor:** Utiliza los patrones de diseño *Strategy* y *Factory* para abstraer la conexión y ejecución. Actualmente soporta **PostgreSQL**, con estructura preparada para MySQL y SQL Server.
+*   **Arquitectura Multi-Motor:** Utiliza los patrones de diseño *Strategy* y *Factory* para abstraer la conexión y ejecución. Actualmente soporta **PostgreSQL** y **MySQL**, con estructura preparada para **SQL Server**.
 *   **Módulo de Seguridad:** Detección de usuarios con exceso de privilegios, revisión de roles superuser innecesarios, y futuras integraciones para cifrado SSL/TLS.
 *   **Módulo de Rendimiento (Performance):** Análisis proactivo de la base de datos buscando:
     *   Consultas propensas a *Full Table Scans* (Falta de índices).
     *   Estadísticas de uso directo desde el motor (ej. `pg_stat_user_tables`).
 *   **Motor de Remediación:** Generación dinámica de SQL de mitigación (ej. scripts de `CREATE INDEX` o `REVOKE`).
+*   **Dashboard Interactivo:** Interfaz gráfica desarrollada en Streamlit para visualizar hallazgos y conectarse a la API desde el navegador.
 *   **Notificaciones Inteligentes:** Integración nativa asíncrona mediante Webhooks de Slack para notificar automáticamente hallazgos críticos.
 
 ## 📂 Arquitectura
@@ -42,17 +43,26 @@ DBA-Sentinel/
    ```
 
 2. **Variables de Entorno:**
-   Crea un archivo `.env` en la raíz del proyecto (basado en el modelo):
+   Crea un archivo `.env` en la raíz del proyecto (sin comillas para evitar problemas de parseo en Docker):
    ```env
-   PROJECT_NAME="DBA-Sentinel"
-   VERSION="1.0.0"
-   API_SECRET_KEY="supersecret_dba_key"
-   SLACK_WEBHOOK_URL="https://hooks.slack.com/services/T000/B000/XXX"
-   PG_USER="postgres"
-   PG_PASSWORD="tu_password"
-   PG_HOST="localhost"
-   PG_PORT="5432"
-   PG_DB="tu_base_de_datos"
+   PROJECT_NAME=DBA-Sentinel
+   VERSION=1.0.0
+   API_SECRET_KEY=supersecret_dba_key
+   SLACK_WEBHOOK_URL=https://hooks.slack.com/services/T000/B000/XXX
+   
+   # PostgreSQL Test Configuration
+   PG_USER=postgres
+   PG_PASSWORD=tu_password
+   PG_HOST=dba-postgres
+   PG_PORT=5432
+   PG_DB=postgres
+
+   # MySQL Test Configuration
+   MYSQL_USER=root
+   MYSQL_PASSWORD=tu_password
+   MYSQL_HOST=dba-mysql
+   MYSQL_PORT=3306
+   MYSQL_DB=mysql
    ```
 
 ## 🐳 Ejecución con Docker (Recomendada)
@@ -60,9 +70,14 @@ DBA-Sentinel/
 ¡Todo está listo para producción! Puedes levantar el auditor como un microservicio en su propio contenedor usando Docker Compose. Esto incluye el despliegue automático de las tareas programadas (Cron jobs).
 
 ```bash
+docker-compose down -v
 docker-compose up --build -d
 ```
-El API estará disponible en `http://localhost:8000`.
+Una vez en ejecución, los servicios estarán disponibles en:
+*   **Dashboard (Streamlit):** [http://localhost:8501](http://localhost:8501)
+*   **API (FastAPI) & Swagger:** [http://localhost:8000/docs](http://localhost:8000/docs)
+*   **PostgreSQL:** `localhost:5432`
+*   **MySQL:** `localhost:3307`
 
 ## 🏃‍♂️ Ejecución Local (Desarrollo)
 

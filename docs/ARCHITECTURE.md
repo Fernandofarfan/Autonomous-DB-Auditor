@@ -21,8 +21,9 @@ Esta documentación sigue el principio de "Enlazar, no incrustar". Su objetivo e
 
 ## Adición de un Nuevo Motor
 
-Para extender el alcance de la herramienta a MySQL (u otro motor de bases de datos):
-1. Crear una clase `MySQLEngine` herede de `BaseDBEngine` (ej. en `app/db_engines/mysql.py`).
-2. Utilizar librerías asíncronas compatibles (ej. `aiomysql`).
+La plataforma actualmente soporta **PostgreSQL** y **MySQL**. Para extender el alcance de la herramienta a **SQL Server** (u otro motor de bases de datos):
+
+1. Crear una clase `SQLServerEngine` que herede de `BaseDBEngine` (ej. en `app/db_engines/sqlserver.py`).
+2. Utilizar librerías asíncronas compatibles (ej. `aioodbc`).
 3. Implementar métodos de seguridad y rendimiento haciendo `queries` asíncronas pertinentes para el motor.
 4. Extender el diccionario del mapeo expuesto por la fábrica (`factory.py`) apuntando al nuevo motor.
